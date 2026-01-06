@@ -210,7 +210,7 @@
 }
 
 .form-input {
-  width: 100%;
+  width: 90%;
   padding: 0.875rem 1rem 0.875rem 2.75rem;
   border: 2px solid var(--border);
   border-radius: var(--radius);
@@ -289,7 +289,7 @@
 }
 
 .btn-secondary {
-  width: 100%;
+  width: 90%;
   padding: 0.875rem 1.5rem;
   background: var(--secondary);
   color: var(--secondary-foreground);
