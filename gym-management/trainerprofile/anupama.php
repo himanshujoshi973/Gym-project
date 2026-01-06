@@ -14,7 +14,7 @@
   <h2 class="text-center text-white mt-5">Anupama - Cardio Trainer</h2>
   <div class="row mt-5">
     <div class="col-md-6 text-center">
-      <img src="/Gym management system/images/avtar2.jpeg" class="trainer-image" alt="Anupama">
+      <img src="/GYM PROJECT/gym-management/images/avtar2.jpeg" class="trainer-image" alt="Anupama">
     </div>
     <div class="col-md-6">
       <h4>About Anupama</h4>

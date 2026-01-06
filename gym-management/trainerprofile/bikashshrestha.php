@@ -15,7 +15,7 @@
   <h2 class="text-center text-white mt-5">Bikash Shrestha - Weightlifting Trainer</h2>
   <div class="row mt-5">
     <div class="col-md-6 text-center">
-      <img src="/Gym management system/images/avtar3.jpeg" class="trainer-image" alt="Bikash Shrestha">
+      <img src="/GYM PROJECT/gym-management/images/avtar3.jpeg" class="trainer-image" alt="Bikash Shrestha">
     </div>
     <div class="col-md-6">
       <h4>About Bikash Shrestha</h4>

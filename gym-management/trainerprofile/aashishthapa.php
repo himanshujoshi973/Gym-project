@@ -14,7 +14,7 @@
   <h2 class="text-center text-white mt-5">Aashish Thapa - Martial Arts Trainer</h2>
   <div class="row mt-5">
     <div class="col-md-6 text-center">
-      <img src="/Gym management system/images/avtar1.jpeg" class="trainer-image" alt="Aashish Thapa">
+      <img src="/GYM PROJECT/gym-management/images/avtar1.jpeg" class="trainer-image" alt="Aashish Thapa">
     </div>
     <div class="col-md-6">
       <h4>About Aashish Thapa</h4>

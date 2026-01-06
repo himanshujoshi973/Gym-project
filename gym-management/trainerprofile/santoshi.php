@@ -15,7 +15,7 @@
   <h2 class="text-center text-white mt-5">Santoshi - Yoga Trainer</h2>
   <div class="row mt-5">
     <div class="col-md-6 text-center">
-      <img src="/Gym management system/images/avtar4.jpeg" class="trainer-image" alt="Santoshi">
+      <img src="/GYM PROJECT/gym-management/images/avtar4.jpeg" class="trainer-image" alt="Santoshi">
     </div>
     <div class="col-md-6">
       <h4>About Santoshi</h4>

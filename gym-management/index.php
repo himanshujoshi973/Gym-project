@@ -210,7 +210,7 @@
             <img src="images/avtar1.jpeg" class="trainer-image" alt="Aashish Thapa">
             <h4 class="card-title">Aashish Thapa</h4>
             <p class="card-text">Martial arts expert with years of experience. Join our martial arts classes and start your journey to discipline and strength.</p>
-            <a class="btn btn-primary-custom btn-sm" href="/Gym management system/trainerprofile/aashishthapa.php">View Profile</a>
+            <a class="btn btn-primary-custom btn-sm" href="/GYM PROJECT/gym-management/trainerprofile/aashishthapa.php">View Profile</a>
           </div>
         </div>
 
@@ -219,7 +219,7 @@
             <img src="images/avtar2.jpeg" class="trainer-image" alt="Anupama">
             <h4 class="card-title">Anupama</h4>
             <p class="card-text">Cardio specialist who will help strengthen your body and mind through dynamic cardiovascular training programs.</p>
-            <a class="btn btn-primary-custom btn-sm" href="/Gym management system/trainerprofile/anupama.php">View Profile</a>
+            <a class="btn btn-primary-custom btn-sm" href="/GYM PROJECT/gym-management/trainerprofile/anupama.php">View Profile</a>
           </div>
         </div>
 
@@ -228,7 +228,7 @@
             <img src="images/avtar3.jpeg" class="trainer-image" alt="Bikash Shrestha">
             <h4 class="card-title">Bikash Shrestha</h4>
             <p class="card-text">Professional trainer with 7 years at Fitness Point, specializing in weight lifting and strength training programs.</p>
-            <a class="btn btn-primary-custom btn-sm" href="/Gym management system/trainerprofile/bikashshrestha.php">View Profile</a>
+            <a class="btn btn-primary-custom btn-sm" href="/GYM PROJECT/gym-management/trainerprofile/bikashshrestha.php">View Profile</a>
           </div>
         </div>
 
@@ -237,7 +237,7 @@
             <img src="images/avtar4.jpeg" class="trainer-image" alt="Santoshi">
             <h4 class="card-title">Santoshi</h4>
             <p class="card-text">Certified yoga expert who will guide you through transformative yoga practices for mind, body, and soul wellness.</p>
-            <a class="btn btn-primary-custom btn-sm" href="/Gym management system/trainerprofile/santoshi.php">View Profile</a>
+            <a class="btn btn-primary-custom btn-sm" href="/GYM PROJECT/gym-management/trainerprofile/santoshi.php">View Profile</a>
           </div>
         </div>
       </div>
