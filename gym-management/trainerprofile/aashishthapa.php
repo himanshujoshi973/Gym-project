@@ -31,6 +31,7 @@
       <p>Join Aashish's martial arts class and begin your journey to becoming stronger, more confident, and more disciplined.</p>
       <big>Time:</big><p>10AM:8PM</p>
     </div>
+    <a class="btn" href="../userRegistration.php">Book Now</a>
   </div>
 </div>
 </body>

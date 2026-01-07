@@ -31,7 +31,7 @@
 
       <p>If you're ready to lift heavy and transform your body, join Bikash’s weightlifting class today!</p>
 
-      <a class="btn" href="userRegistration.php">Book Now</a>
+      <a class="btn" href="../userRegistration.php">Book Now</a>
     </div>
   </div>
 </div>

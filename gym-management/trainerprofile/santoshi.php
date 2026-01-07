@@ -31,7 +31,7 @@
 
       <p>Join Santoshi's yoga class and discover the benefits of mindfulness, balance, and body awareness.</p>
 
-      <a class="btn" href="userRegistration.php">Book Now</a>
+      <a class="btn" href="../userRegistration.php">Book Now</a>
     </div>
   </div>
 </div>

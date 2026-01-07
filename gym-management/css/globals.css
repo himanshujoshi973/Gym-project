@@ -229,13 +229,13 @@
 
 .form-input:focus + .input-icon {
   color: var(--primary);
-  transform: scale(1.1);
+  transform: scale(1.5);
 }
 
 .input-icon {
   position: absolute;
   left: 1rem;
-  top: 2.25rem;
+  top: 3rem;
   color: var(--muted-foreground);
   transition: all 0.3s ease;
   z-index: 1;

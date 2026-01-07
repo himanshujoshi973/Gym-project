@@ -31,6 +31,7 @@
       <p>Whether you're looking to lose weight, build endurance, or just get in shape, Anupama's cardio classes are the perfect fit!</p>
       <big>Time:</big><p>2PM:8PM</p>
     </div>
+    <a class="btn" href="../userRegistration.php">Book Now</a>
   </div>
 </div>
 </body>
