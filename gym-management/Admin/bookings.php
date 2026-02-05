@@ -32,7 +32,7 @@ if (isset($_POST['update_payment'])) {
 if (isset($_POST['delete'])) {
     $id = $_POST['id'];
     $sql = "DELETE FROM submitbookingt_tb WHERE Booking_id = ?";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare($id);
     $stmt->bind_param("i", $id);
     
     if ($stmt->execute()) {
@@ -58,7 +58,6 @@ $filter_payment = $_GET['filter_payment'] ?? '';
         <div class="alert alert-danger"><?php echo $error_msg; ?></div>
     <?php endif; ?>
 
-    <!-- Filter Section -->
     <div class="card mb-4">
         <div class="card-header bg-secondary text-white text-left">
             <h5 class="mb-0">Filter Bookings</h5>
@@ -92,12 +91,12 @@ $filter_payment = $_GET['filter_payment'] ?? '';
         </div>
     </div>
 
-    <!-- Booking Statistics -->
     <div class="row mb-4">
         <?php
         $totalBookings = $conn->query("SELECT COUNT(*) as count FROM submitbookingt_tb")->fetch_assoc()['count'];
-        $paidBookings = $conn->query("SELECT COUNT(*) as count FROM submitbookingt_tb WHERE payment_status = 'paid'")->fetch_assoc()['count'];
-        $pendingPayments = $conn->query("SELECT COUNT(*) as count FROM submitbookingt_tb WHERE payment_status = 'pending'")->fetch_assoc()['count'];
+        // Updated to count both 'paid' and 'Paid'
+        $paidBookings = $conn->query("SELECT COUNT(*) as count FROM submitbookingt_tb WHERE LCASE(payment_status) = 'paid'")->fetch_assoc()['count'];
+        $pendingPayments = $conn->query("SELECT COUNT(*) as count FROM submitbookingt_tb WHERE LCASE(payment_status) = 'pending'")->fetch_assoc()['count'];
         ?>
         <div class="col-md-4">
             <div class="card text-center bg-primary text-white">
@@ -126,7 +125,6 @@ $filter_payment = $_GET['filter_payment'] ?? '';
     </div>
 
     <?php
-    // Build SQL query with filters
     $sql = "SELECT * FROM submitbookingt_tb WHERE 1=1";
     $params = array();
     $types = "";
@@ -181,7 +179,6 @@ $filter_payment = $_GET['filter_payment'] ?? '';
             $bookingDate = new DateTime($row["member_date"]);
             $today = new DateTime('today');
             
-            // Determine booking status
             $bookingStatus = '';
             if ($bookingDate < $today) {
                 $bookingStatus = 'Completed';
@@ -191,9 +188,9 @@ $filter_payment = $_GET['filter_payment'] ?? '';
                 $bookingStatus = 'Upcoming';
             }
             
-            // Payment status badge
             $paymentBadge = '';
-            switch ($row['payment_status']) {
+            // Added strtolower to handle case sensitivity automatically
+            switch (strtolower($row['payment_status'])) {
                 case 'paid':
                     $paymentBadge = '<span class="badge badge-success">Paid</span>';
                     break;
@@ -207,7 +204,7 @@ $filter_payment = $_GET['filter_payment'] ?? '';
                     $paymentBadge = '<span class="badge badge-info">Refunded</span>';
                     break;
                 default:
-                    $paymentBadge = '<span class="badge badge-secondary">Unknown</span>';
+                    $paymentBadge = '<span class="badge badge-secondary">' . ($row['payment_status'] ?? 'Unknown') . '</span>';
             }
             
             echo '<tr>';
@@ -242,7 +239,6 @@ $filter_payment = $_GET['filter_payment'] ?? '';
     ?>
 </div>
 
-<!-- Payment Status Modal -->
 <div class="modal fade" id="paymentModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">

@@ -33,11 +33,17 @@ $totalmeb = ($result) ? $result->num_rows : 0;
 $sql = "SELECT * FROM submitbookingt_tb";
 $result = $conn->query($sql);
 $totalbok = $result ? $result->num_rows : 0;
+
+// NEW: Fetch Paid Bookings and Total Revenue (Case-insensitive check for 'paid')
+$sql_paid = "SELECT COUNT(*) as paid_count, SUM(total_price) as revenue FROM submitbookingt_tb WHERE LCASE(payment_status) = 'paid'";
+$res_paid = $conn->query($sql_paid);
+$paid_data = $res_paid->fetch_assoc();
+$total_paid = $paid_data['paid_count'] ?? 0;
+$total_revenue = $paid_data['revenue'] ?? 0;
 ?>
 
 <div class="col-sm-9 col-md-10">
   <div class="row mx-5 text-center">
-    <!-- Total Schedules -->
     <div class="col-sm-4 mt-5">
       <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
         <div class="card-header">Total Schedules</div>
@@ -48,7 +54,6 @@ $totalbok = $result ? $result->num_rows : 0;
       </div>
     </div>
 
-    <!-- Total Members -->
     <div class="col-sm-4 mt-5">
       <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
         <div class="card-header">Number of Members</div>
@@ -59,10 +64,9 @@ $totalbok = $result ? $result->num_rows : 0;
       </div>
     </div>
 
-    <!-- Bookings -->
     <div class="col-sm-4 mt-5">
       <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
-        <div class="card-header">Bookings</div>
+        <div class="card-header">Total Bookings</div>
         <div class="card-body">
           <h4 class="card-title"><?php echo $totalbok; ?></h4>
           <a class="btn text-white" href="bookings.php">More info</a>
@@ -71,7 +75,27 @@ $totalbok = $result ? $result->num_rows : 0;
     </div>
   </div>
 
-  <!-- Registered Members Table -->
+  <div class="row mx-5 text-center">
+    <div class="col-sm-6 mt-3">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-header">Paid Bookings</div>
+        <div class="card-body">
+          <h4 class="card-title"><?php echo $total_paid; ?></h4>
+          <p class="card-text">Successfully processed payments</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 mt-3">
+      <div class="card text-white bg-danger mb-3">
+        <div class="card-header">Total Revenue</div>
+        <div class="card-body">
+          <h4 class="card-title">Rs. <?php echo number_format($total_revenue, 2); ?></h4>
+          <p class="card-text">Earnings from gym subscriptions</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="mx-5 mt-5 text-center">
     <p class="bg-primary text-white p-2"><b>Registered Members</b></p>
     <?php
@@ -92,8 +116,8 @@ $totalbok = $result ? $result->num_rows : 0;
       while ($row = $result->fetch_assoc()) {
         echo '<tr>';
         echo '<th scope="row">' . $row["m_login_id"] . '</th>';
-        echo '<td>' . $row["m_name"] . '</td>';
-        echo '<td>' . $row["m_email"] . '</td>';
+        echo '<td>' . htmlspecialchars($row["m_name"]) . '</td>';
+        echo '<td>' . htmlspecialchars($row["m_email"]) . '</td>';
         echo '</tr>';
       }
 

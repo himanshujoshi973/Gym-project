@@ -1,9 +1,13 @@
 <?php
+// Start session first to avoid headers already sent errors
+session_start();
+
 define('TITLE', 'Members');
 define('PAGE', 'members');
-include('includes/header.php'); 
+
+// Include files - Ensure paths are correct
 include('../dbConnection.php');
-session_start();
+include('includes/header.php'); 
 
 if (!isset($_SESSION['is_adminlogin'])) {
     echo "<script> location.href='login.php'; </script>";
@@ -72,11 +76,19 @@ if (isset($_REQUEST['delete'])) {
         <div class="alert alert-danger"><?php echo $error_msg; ?></div>
     <?php endif; ?>
 
-    <!-- Member Statistics -->
     <div class="row mb-4">
         <?php
-        $totalMembers = $conn->query("SELECT COUNT(*) as count FROM memberlogin_tb")->fetch_assoc()['count'];
-        $activeMembers = $conn->query("SELECT COUNT(*) as count FROM memberlogin_tb WHERE status = 'active' OR status IS NULL")->fetch_assoc()['count'];
+        // Added null checks to prevent Fatal Errors if connection flickers
+        $totalMembers = 0;
+        $activeMembers = 0;
+        
+        if ($conn) {
+            $totalRes = $conn->query("SELECT COUNT(*) as count FROM memberlogin_tb");
+            $totalMembers = $totalRes ? $totalRes->fetch_assoc()['count'] : 0;
+            
+            $activeRes = $conn->query("SELECT COUNT(*) as count FROM memberlogin_tb WHERE status = 'active' OR status IS NULL");
+            $activeMembers = $activeRes ? $activeRes->fetch_assoc()['count'] : 0;
+        }
         $inactiveMembers = $totalMembers - $activeMembers;
         ?>
         <div class="col-md-4">
@@ -106,12 +118,12 @@ if (isset($_REQUEST['delete'])) {
     </div>
 
     <?php
-    // Get members with their booking information
+    // Get members with their booking information - Logic improved for Subscription Status
     $sql = "SELECT m.*, 
                    COUNT(b.Booking_id) as total_bookings,
                    MAX(b.member_date) as last_booking_date,
                    MAX(b.subscription_end_date) as subscription_end,
-                   b.payment_status as last_payment_status
+                   (SELECT payment_status FROM submitbookingt_tb WHERE member_email = m.m_email ORDER BY Booking_id DESC LIMIT 1) as last_payment_status
             FROM memberlogin_tb m 
             LEFT JOIN submitbookingt_tb b ON m.m_email = b.member_email 
             GROUP BY m.m_login_id 
@@ -119,7 +131,7 @@ if (isset($_REQUEST['delete'])) {
     
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         echo '<div class="table-responsive">
         <table class="table table-bordered table-hover table-striped">
             <thead class="thead-dark">
@@ -142,11 +154,12 @@ if (isset($_REQUEST['delete'])) {
             $subscriptionStatus = 'No Subscription';
             $subscriptionClass = 'badge-secondary';
             
-            if ($row['subscription_end']) {
+            // Fixed Logic: Check if payment is PAID and end_date exists
+            if (!empty($row['subscription_end']) && strtolower($row['last_payment_status']) == 'paid') {
                 $endDate = new DateTime($row['subscription_end']);
-                $today = new DateTime();
+                $today = new DateTime('today');
                 
-                if ($endDate > $today) {
+                if ($endDate >= $today) {
                     $subscriptionStatus = 'Active (Expires: ' . $endDate->format('Y-m-d') . ')';
                     $subscriptionClass = 'badge-success';
                 } else {
@@ -156,7 +169,7 @@ if (isset($_REQUEST['delete'])) {
             }
             
             $paymentBadge = '';
-            switch ($row['last_payment_status']) {
+            switch (strtolower($row['last_payment_status'])) {
                 case 'paid':
                     $paymentBadge = '<span class="badge badge-success">Paid</span>';
                     break;
@@ -230,9 +243,8 @@ if (isset($_REQUEST['delete'])) {
     ?>
 </div>
 
-<!-- Add Member Button -->
-<div>
-    <a class="btn btn-success box" href="insertmeb.php" title="Add New Member">
+<div class="text-right mx-5">
+    <a class="btn btn-success" href="insertmeb.php" title="Add New Member">
         <i class="fas fa-plus fa-2x"></i>
     </a>
 </div>

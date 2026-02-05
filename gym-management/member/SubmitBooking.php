@@ -32,7 +32,7 @@ if (isset($_POST['Submitbooking'])) {
         empty($mName) || empty($mEmail) || empty($_POST['membermobile']) || 
         empty($_POST['bookingtype']) || empty($_POST['trainer']) || 
         empty($_POST['bookingdate']) || empty($_POST['memberadd1']) || 
-        empty($_POST['subscription'])
+        empty($_POST['subscription']) || empty($_POST['paymentmethod'])
     ) {
         $msg = '<div class="alert alert-warning col-sm-6 ml-5 mt-2" role="alert"> All Fields Are Required </div>';
     } else {
@@ -53,16 +53,27 @@ if (isset($_POST['Submitbooking'])) {
             $madd1 = $_POST['memberadd1'];
             $bdate = $_POST['bookingdate'];
             $subscription = $_POST['subscription'];
+            $paymentMethod = $_POST['paymentmethod'];
+            $totalPrice = $_POST['totalprice'];
 
             $stmt = $conn->prepare("INSERT INTO submitbookingt_tb 
-                (member_name, member_email, member_mobile, member_add1, booking_type, trainer, member_date, subscription_months) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssssi", $mName, $mEmail, $mmobile, $madd1, $btype, $trai, $bdate, $subscription);
+                (member_name, member_email, member_mobile, member_add1, booking_type, trainer, member_date, subscription_months, payment_method, total_price, payment_status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
+            $stmt->bind_param("sssssssisd", $mName, $mEmail, $mmobile, $madd1, $btype, $trai, $bdate, $subscription, $paymentMethod, $totalPrice);
 
             if ($stmt->execute()) {
                 $genid = $conn->insert_id;
                 $_SESSION['myid'] = $genid;
-                echo "<script>alert('Booking Successful! Booking ID: $genid'); location.href='mybooking.php';</script>";
+                
+                if ($paymentMethod == 'Khalti') {
+                    $_SESSION['khalti_booking'] = [
+                        'booking_id' => $genid,
+                        'amount' => $totalPrice
+                    ];
+                    echo "<script>location.href='payment-request.php?booking_id=$genid&amount=$totalPrice&name=" . urlencode($mName) . "&email=" . urlencode($mEmail) . "&phone=$mmobile';</script>";
+                } else {
+                    echo "<script>alert('Booking Successful! Booking ID: $genid. Payment: Cash on Delivery'); location.href='mybooking.php';</script>";
+                }
                 exit();
             } else {
                 $msg = '<div class="alert alert-danger col-sm-6 ml-5 mt-2" role="alert"> Unable to make booking: ' . $conn->error . '</div>';
@@ -157,16 +168,40 @@ if (isset($_POST['Submitbooking'])) {
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="inputSubscription">Subscription Duration (in months)</label>
-                    <select class="form-control" id="inputSubscription" name="subscription" required>
-                        <option value="">Select</option>
-                        <option value="1">1 Month</option>
-                        <option value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="12">12 Months</option>
-                    </select>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputSubscription">Subscription Duration</label>
+                            <select class="form-control" id="inputSubscription" name="subscription" required onchange="calculatePrice()">
+                                <option value="">Select</option>
+                                <option value="1">1 Month - Rs. 2000/month</option>
+                                <option value="3">3 Months - Rs. 1900/month (5% off)</option>
+                                <option value="6">6 Months - Rs. 1800/month (10% off)</option>
+                                <option value="12">12 Months - Rs. 1700/month (15% off)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputPayment">Payment Method</label>
+                            <select class="form-control" id="inputPayment" name="paymentmethod" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="Khalti">Khalti (Online Payment)</option>
+                                <option value="COD">Cash on Delivery</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="alert alert-info" id="priceDisplay" style="display: none;">
+                    <h5 class="mb-0">
+                        <strong>Total Amount:</strong> 
+                        <span class="float-right">Rs. <span id="totalPrice">0</span></span>
+                    </h5>
+                    <small class="text-muted" id="priceBreakdown"></small>
+                </div>
+
+                <input type="hidden" name="totalprice" id="totalPriceInput" value="0">
 
                 <div class="form-group">
                     <label for="inputAddress">Address</label>
@@ -182,7 +217,7 @@ if (isset($_POST['Submitbooking'])) {
     </div>
 </div>
 
-<!-- JS input validation -->
+<!-- JS input validation and price calculation -->
 <script>
 function isInputNumber(evt) {
     var ch = String.fromCharCode(evt.which);
@@ -190,6 +225,59 @@ function isInputNumber(evt) {
         evt.preventDefault();
         return false;
     }
+}
+
+function calculatePrice() {
+    var subscription = document.getElementById("inputSubscription").value;
+    var priceDisplay = document.getElementById("priceDisplay");
+    var totalPriceSpan = document.getElementById("totalPrice");
+    var priceBreakdown = document.getElementById("priceBreakdown");
+    var totalPriceInput = document.getElementById("totalPriceInput");
+    
+    if (subscription === "") {
+        priceDisplay.style.display = "none";
+        totalPriceInput.value = "0";
+        return;
+    }
+    
+    var basePrice = 2000;
+    var monthlyRate = basePrice;
+    var discount = 0;
+    var totalPrice = 0;
+    
+    switch(subscription) {
+        case "1":
+            monthlyRate = 2000;
+            discount = 0;
+            totalPrice = 2000;
+            break;
+        case "3":
+            monthlyRate = 1900;
+            discount = 5;
+            totalPrice = 5700;
+            break;
+        case "6":
+            monthlyRate = 1800;
+            discount = 10;
+            totalPrice = 10800;
+            break;
+        case "12":
+            monthlyRate = 1700;
+            discount = 15;
+            totalPrice = 20400;
+            break;
+    }
+    
+    totalPriceSpan.textContent = totalPrice.toLocaleString();
+    totalPriceInput.value = totalPrice;
+    
+    if (discount > 0) {
+        priceBreakdown.textContent = subscription + " months × Rs. " + monthlyRate.toLocaleString() + "/month (" + discount + "% discount applied)";
+    } else {
+        priceBreakdown.textContent = subscription + " month × Rs. " + monthlyRate.toLocaleString() + "/month";
+    }
+    
+    priceDisplay.style.display = "block";
 }
 
 // Set min date to today

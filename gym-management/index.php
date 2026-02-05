@@ -247,7 +247,7 @@
   <!-- Enhanced Contact Section -->
   <section class="contact-section" id="contact">
     <div class="container">
-      <h2 class="section-title fade-in">Get In Touch</h2>
+      <h2 class="section-title fade-in">Contact US</h2>
       <div class="row justify-content-center">
         <div class="col-lg-8 fade-in">
           <?php include('contactform.php'); ?>
